@@ -130,8 +130,8 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       ),
       body: Center( // Center the scanner area
         child: SizedBox( // Define the size of the scanner area
-          width: 300, // Desired width for the square scanner
-          height: 300, // Desired height for the square scanner
+          width: 350, // Desired width for the square scanner
+          height: 200, // Desired height for the square scanner
           child: Builder(builder: (builderContext) {
             Widget scannerWidget = BarcodeScannerWidget(
               scannerType: ScannerType.barcode,
