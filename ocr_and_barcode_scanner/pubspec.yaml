@@ -30,8 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  native_barcode_scanner: ^1.0.11
-  permission_handler: ^11.3.1 # Or the latest version
+  native_barcode_scanner: ^1.0.11 # For barcode scanning
+  permission_handler: ^11.3.1 # For handling permissions
+  image_picker: ^1.1.2 # For picking images
+  google_mlkit_text_recognition: ^0.11.0 # Add ML Kit text recognition (or latest)
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
