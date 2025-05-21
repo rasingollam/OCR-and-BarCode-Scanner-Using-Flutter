@@ -44,11 +44,48 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
         final inputImage = InputImage.fromFilePath(pickedFile.path);
         final RecognizedText recognisedText =
             await _textRecognizer.processImage(inputImage);
-        setState(() {
-          _recognizedText = recognisedText.text.isEmpty
-              ? "No text found in the image."
-              : recognisedText.text;
-        });
+        
+        String originalText = recognisedText.text;
+        if (originalText.isEmpty) {
+          setState(() {
+            _recognizedText = "No text found in the image.";
+          });
+        } else {
+          List<String> lines = originalText.split('\n');
+          List<String> formattedLines = [];
+          for (int i = 0; i < lines.length; i += 2) {
+            if (i + 1 < lines.length) {
+              // Check if both lines are not empty before joining, or join as is
+              String line1 = lines[i].trim();
+              String line2 = lines[i+1].trim();
+              if (line1.isNotEmpty && line2.isNotEmpty) {
+                formattedLines.add("$line1 $line2");
+              } else if (line1.isNotEmpty) {
+                formattedLines.add(line1);
+              } else if (line2.isNotEmpty) {
+                // This case is less likely if line1 was empty, but good to handle
+                formattedLines.add(line2);
+              } else {
+                // Both lines (or the first of the pair) might be empty after trim
+                // if original line was just whitespace. Add a blank line or skip.
+                // For now, let's add if there was content before trim or if it's an intended blank line.
+                if (lines[i].isNotEmpty || (i+1 < lines.length && lines[i+1].isNotEmpty)) {
+                   formattedLines.add("${lines[i]} ${lines[i+1]}".trim()); // trim the combined result
+                }
+              }
+            } else {
+              // Odd number of lines, add the last line as is
+              formattedLines.add(lines[i].trim());
+            }
+          }
+          // Filter out any completely empty strings that might have resulted from processing
+          // if two consecutive original lines were empty or only whitespace.
+          String finalText = formattedLines.where((line) => line.isNotEmpty).join('\n');
+
+          setState(() {
+            _recognizedText = finalText.isEmpty ? "No text found after formatting." : finalText;
+          });
+        }
       } else {
         setState(() {
           _recognizedText = "No image captured.";
